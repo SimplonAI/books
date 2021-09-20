@@ -1,0 +1,7 @@
+--- !DBConfig
+connector: postgresql+psycopg2
+server: localhost
+port: 5432
+username: book_engine
+password: testtest
+database: book_engine
