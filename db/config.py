@@ -23,3 +23,5 @@ class ConfigManager():
     def __init__(self, config_file = 'config.yml'):
         with open(config_file, 'r') as stream:
             self.config: DBConfig = yaml.safe_load(stream)
+
+config_manager = ConfigManager()

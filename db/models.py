@@ -1,6 +1,8 @@
 from sqlalchemy import create_engine, Column, Integer, ForeignKey, String, Numeric
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+import pandas as pd
+from db import db
 Base = declarative_base()
 
 class Tags(Base):
@@ -9,6 +11,9 @@ class Tags(Base):
     __tablename__ = "tags"
     tag_id = Column('tag_id', Integer, primary_key=True)
     tag_name = Column('tag_name', String, nullable=False)
+
+    def insert_df(data: pd.DataFrame):
+        data.to_sql(Tags.__tablename__, db)
 
 
 class Books(Base):
@@ -42,6 +47,8 @@ class Books(Base):
     ratings = relationship("Ratings")
     to_reads = relationship("ToRead")
 
+    def insert_df(data: pd.DataFrame):
+        data.to_sql(Books.__tablename__, db)
 
 class BooksTags(Base):
     """Table d'association entre les tags et les livres (many-to-many)
@@ -49,6 +56,9 @@ class BooksTags(Base):
     __tablename__ = "books_tags"
     tag_id = Column('tag_id', ForeignKey('tags.tag_id'), primary_key=True)
     book_id = Column('book_id', ForeignKey('books.book_id'), primary_key=True)
+
+    def insert_df(data: pd.DataFrame):
+        data.to_sql(BooksTags.__tablename__, db)
 
 
 class Ratings(Base):
@@ -59,6 +69,9 @@ class Ratings(Base):
     user_id = Column('user_id', Integer, primary_key=True)
     rating = Column('rt_rating', Integer, nullable=False)
 
+    def insert_df(data: pd.DataFrame):
+        data.to_sql(Ratings.__tablename__, db)
+
 
 class ToRead(Base):
     """Modèle stockant les livres que veulent lire les utilisateurs
@@ -66,3 +79,6 @@ class ToRead(Base):
     __tablename__ = "to_read"
     book_id = Column('book_id', ForeignKey('books.book_id'), primary_key=True)
     user_id = Column('user_id', Integer, primary_key=True)
+
+    def insert_df(data: pd.DataFrame):
+        data.to_sql(ToRead.__tablename__, db)
