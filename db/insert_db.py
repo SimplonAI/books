@@ -4,6 +4,8 @@ import numpy as np
 import re
 from models import Books, BooksTags, Ratings, Tags, ToRead
 from db import db
+from consolemenu import ConsoleMenu
+from consolemenu.items import FunctionItem
 
 def add_prefix(data: pd.DataFrame, prefix: str, filter: (list | str) =[]):
     if isinstance(filter, str):
@@ -37,5 +39,19 @@ def insert_data():
         print("[5/5] Relation Livres-Tags inséré")
     print("Tout a été inséré !")
 
+def add_data(file):
+    data = pd.read_csv(file)
+    print("look for data with API")
+
+def add_data_menu():
+    file = ""
+    while file == "":
+        file = input("Chemin vers le fichier csv (q pour quitter) : ")
+    if file != "q":
+        add_data(file)
+
 if __name__ == '__main__':
-    insert_data()
+    menu = ConsoleMenu()
+    menu.append_item(FunctionItem("Insertion initiale des données csv", insert_data))
+    menu.append_item(FunctionItem("Importation de données partielles", add_data_menu))
+    menu.show()
