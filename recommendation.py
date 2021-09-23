@@ -9,4 +9,3 @@ data = pd.read_csv("donnees.csv")
 #%%
 data.head(3)
 #%%
-https://docs.microsoft.com/fr-fr/visualstudio/liveshare/reference/security#code-commands
