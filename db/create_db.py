@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
-from models import Base
-from config import ConfigManager, DBConfig
-from db import db
+from .models import Base
+from .config import ConfigManager, DBConfig
+from .db import db
 
 def main():
     print("Creation des tables...")

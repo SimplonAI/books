@@ -1,11 +1,9 @@
 from __future__ import annotations
 import pandas as pd
-import numpy as np
-import re
-from models import Books, BooksTags, Ratings, Tags, ToRead
-from db import db
 from consolemenu import ConsoleMenu
 from consolemenu.items import FunctionItem
+from .models import Books, BooksTags, Ratings, Tags, ToRead
+from .db import db
 
 def add_prefix(data: pd.DataFrame, prefix: str, filter: (list | str) =[]):
     if isinstance(filter, str):

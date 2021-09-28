@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.associationproxy import association_proxy
 import pandas as pd
-from db import db
+from .db import db
 Base = declarative_base()
 
 class Tags(Base):
