@@ -1,14 +1,14 @@
 from sqlalchemy import create_engine
-from .models import Base
-from .config import ConfigManager, DBConfig
-from .db import db
+from db.models import Base
+from db.config import ConfigManager, DBConfig
 
 
-def main():
+def create_db(db):
     print("Creation des tables...")
     Base.metadata.create_all(db)
     print("Tout est terminé !")
 
 
 if __name__ == "__main__":
-    main()
+    from db import db
+    create_db(db)

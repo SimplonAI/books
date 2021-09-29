@@ -34,7 +34,7 @@ class ContentBasedModel:
         Returns:
             pd.DataFrame: Retourne un dataframe contenant 10 livres similaires
         """
-        idx = self.books[book["book_title"] == book].index[0]
+        idx = self.books[self.books["book_title"] == book].index[0]
         # Obtenir l'index du livre qui correspond au titre
         similitude_scores = list(enumerate(self.__cosine_sim[idx]))
         # Obtenir les scores de similarité
@@ -47,7 +47,7 @@ class ContentBasedModel:
         # Obtenir les scores de 10 livres similaires
         talk_indices = [i[0] for i in filtered_scores]
         # Obtenir les index des livres
-        return self.books["title"].iloc[talk_indices]
+        return self.books["book_title"].drop(idx).iloc[talk_indices]
 
     def train(self):
         tfidf = TfidfVectorizer()

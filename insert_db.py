@@ -2,9 +2,7 @@ from __future__ import annotations
 import pandas as pd
 from consolemenu import ConsoleMenu
 from consolemenu.items import FunctionItem
-from .models import Books, BooksTags, Ratings, Tags, ToRead
-from .db import db
-
+from db.models import Books, BooksTags, Ratings, Tags, ToRead
 
 def add_prefix(data: pd.DataFrame, prefix: str, filter: (list | str) = []):
     if isinstance(filter, str):
@@ -16,7 +14,7 @@ def add_prefix(data: pd.DataFrame, prefix: str, filter: (list | str) = []):
     )
 
 
-def insert_data():
+def insert_data(db):
     # Chargement des données csv
     ratings = pd.read_csv("../ratings.csv")
     books = pd.read_csv("../books.csv")
@@ -57,7 +55,8 @@ def add_data_menu():
 
 
 if __name__ == "__main__":
+    from db import db
     menu = ConsoleMenu()
-    menu.append_item(FunctionItem("Insertion initiale des données csv", insert_data))
+    menu.append_item(FunctionItem("Insertion initiale des données csv", lambda: insert_data(db)))
     menu.append_item(FunctionItem("Importation de données partielles", add_data_menu))
     menu.show()

@@ -1,16 +1,16 @@
 from __future__ import annotations
 import argparse
 import asyncio
+import os
+import sys
 from consolemenu import ConsoleMenu
 from consolemenu.items import FunctionItem
-import sys
 import tensorflow as tf
 from tqdm import tqdm
 from ml.data_manager import DataManager
 from ml.content_model import ContentBasedModel
 from ml.collab_model import CollaborativeBasedModel
 from ml.pop_model import PopularityBasedModel
-
 
 class Main:
     """Classe de lancement du programme principal."""
@@ -20,6 +20,8 @@ class Main:
         self.title = "BYAM - Yet Another Model for Books"
         # Slogan de l'application
         self.slogan = "L'API qui recommande les livres pour vos utilisateurs !"
+        if not os.path.isfile(os.path.join("config.yml")):
+            sys.exit("Vous devez configurer votre application avec un config.yml pour qu'elle puisse s'exécuter !")
         # Construction du menu
         self.__menu = self._build_menu()
         # Construction des arguments en ligne de commande
@@ -58,6 +60,12 @@ class Main:
         )
         menu.append_item(
             FunctionItem("Lancer un serveur de développement pour l'API", self._run_api)
+        )
+        menu.append_item(
+            FunctionItem("Création de la base de données", self._create_db)
+        )
+        menu.append_item(
+            FunctionItem("Insertion des données dans la base de données", self._insert_db)
         )
         return menu
 
@@ -106,6 +114,8 @@ class Main:
             args = self.__parser.parse_args()
             if args.train:
                 self._train(args.path)
+            elif args.poprec:
+                self._popularity_rec()
             elif args.contentrec:
                 self._content_rec()
             elif args.collabrec:
@@ -148,8 +158,12 @@ class Main:
 
 
     def _collab_rec(self):
-        user_id = input("ID de l'utilisateur : ")
-        print(self.collab_model.predict(user_id))
+        try:
+            user_id = int(input("ID de l'utilisateur : "))
+            self.collab_model.load()
+            print(self.collab_model.predict(user_id))
+        except:
+            print("Vous devez entrer l'id d'un utilisateur (exemple 43675) !")
         input("Entrée pour continuer...")
     
     def _run_api(self):
@@ -160,5 +174,6 @@ class Main:
 
 if __name__ == "__main__":
     tf.get_logger().setLevel(3)
+    tf.autograph.set_verbosity(1)
     main = Main()
     main.run()
