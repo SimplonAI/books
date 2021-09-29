@@ -11,11 +11,13 @@ class ContentBasedModel:
     ):
         self.__path = path
         self.books = books
+        self.__cosine_sim = None
 
     def load(self):
         """Charge le modèle enregistré
         """
-        self.__cosine_sim = load(os.path.join(self.__path, "content_based_saved.joblib"))
+        if self.__cosine_sim is None:
+            self.__cosine_sim = load(os.path.join(self.__path, "content_based_saved.joblib"))
 
     def save(self):
         """Enregistre le modèle entraîné
