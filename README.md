@@ -62,4 +62,7 @@ La deuxième fonctionnalité (option 3) est la recommandation basé sur le conte
 
 La troisième fonctionnalité (option 4) est la recommandation collaborative. Il vous sera demandé comme argument GET (ou ici via un prompt) l'id de l'utilisateur pour lequel faire la prédiction (exemple: 43675)
 
-Enfin il sera possible de lancer un serveur de développement via la dernière option.
+Enfin il sera possible de lancer un serveur de développement en tapant directement :
+```bash
+python main.py -r
+```
