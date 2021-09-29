@@ -17,7 +17,7 @@ class Main:
 
     def __init__(self):
         # Titre de l'application
-        self.title = "BookPi"
+        self.title = "BYAM - Yet Another Model for Books"
         # Slogan de l'application
         self.slogan = "L'API qui recommande les livres pour vos utilisateurs !"
         # Construction du menu
