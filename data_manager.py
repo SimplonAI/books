@@ -13,15 +13,17 @@ class DataManager():
     _lockData: Lock = Lock()
     _keepData: bool = False
     _lockKeepData: Lock = Lock()
-    def __new__(cls, db, keep_data: bool=False, *args, **kwargs):
+    def __new__(cls, keep_data: bool=False, *args, **kwargs):
         with cls._lockInstance:
             if cls._instance is None:
                 cls._instance = super().__new__(cls, *args, **kwargs)
                 cls._instance.keep_data = keep_data
-                cls._instance.db = db
                 if keep_data:
                     cls._instance._load()
         return cls._instance
+    
+    def init(self, db):
+        self.db = db
     
     @property
     def keep_data(self) -> bool:
@@ -58,7 +60,6 @@ class DataManager():
                 self.books = books
         return data, books
         
-
     @property
     async def data(self):
         """DataFrame des données chargées depuis la BDD et transformées
@@ -83,6 +84,7 @@ class DataManager():
         with open(path) as f:
             exclude_tags = f.read().splitlines()
         return re.compile("(?:"+ "|".join(exclude_tags) +")")
+
     def filter_tags(self, row: str):
         if not row.replace("-", "").isalpha():
             return False
