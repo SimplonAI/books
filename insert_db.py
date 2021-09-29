@@ -16,11 +16,11 @@ def add_prefix(data: pd.DataFrame, prefix: str, filter: (list | str) = []):
 
 def insert_data(db):
     # Chargement des données csv
-    ratings = pd.read_csv("../ratings.csv")
-    books = pd.read_csv("../books.csv")
-    tags = pd.read_csv("../tags.csv")
-    book_tags = pd.read_csv("../book_tags.csv")
-    to_read = pd.read_csv("../to_read.csv")
+    ratings = pd.read_csv("data/ratings.csv")
+    books = pd.read_csv("data/books.csv")
+    tags = pd.read_csv("data/tags.csv")
+    book_tags = pd.read_csv("data/book_tags.csv")
+    to_read = pd.read_csv("data/to_read.csv")
 
     books.isbn13 = books.isbn13.astype("Int64")
     books = add_prefix(books, "book_", "book_id")

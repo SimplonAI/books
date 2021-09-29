@@ -1,7 +1,13 @@
 --- !DBConfig
+# connecteur
 connector: postgresql+psycopg2
+# Serveur de connexion a Postgres
 server: localhost
+# Port de connexion a Postgres
 port: 5432
+# Nom d'utilisateur Postgres
 username: book_engine
+# Mot de passe utilisateur Postgres
 password: testtest
+# Nom de la base de donnees Postgres
 database: book_engine

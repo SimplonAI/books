@@ -61,12 +61,6 @@ class Main:
         menu.append_item(
             FunctionItem("Lancer un serveur de développement pour l'API", self._run_api)
         )
-        menu.append_item(
-            FunctionItem("Création de la base de données", self._create_db)
-        )
-        menu.append_item(
-            FunctionItem("Insertion des données dans la base de données", self._insert_db)
-        )
         return menu
 
     def _build_parser(self) -> argparse.ArgumentParser:
