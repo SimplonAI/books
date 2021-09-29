@@ -11,26 +11,27 @@ from ml.content_model import ContentBasedModel
 from ml.collab_model import CollaborativeBasedModel
 from ml.pop_model import PopularityBasedModel
 
-async def train_models(conn):
-    data_manager = DataManager(conn, keep_data=True)
-    data, books = await data_manager.data
-    train_models = [lambda: ContentBasedModel(books).train_save(), lambda: CollaborativeBasedModel().train_save(data, books)]
-    for train_model in tqdm(train_models, desc="Entrainement des modèles"):
-        train_model()
-
 
 class Main:
     """Classe de lancement du programme principal."""
 
     def __init__(self):
         # Titre de l'application
-        self.title = "BookPi"
+        self.title = "BYAM - Yet Another Model for Books"
         # Slogan de l'application
         self.slogan = "L'API qui recommande les livres pour vos utilisateurs !"
         # Construction du menu
         self.__menu = self._build_menu()
         # Construction des arguments en ligne de commande
         self.__parser = self._build_parser()
+        from db import db
+        print("Chargement des données...")
+        data_manager = DataManager(db, keep_data=True)
+        loop = asyncio.new_event_loop()
+        # Chargement des données de la bdd
+        _, books = loop.run_until_complete(data_manager.data)
+        self.content_model = ContentBasedModel(books)
+        self.collab_model = CollaborativeBasedModel()
 
     def _build_menu(self) -> ConsoleMenu:
         """Crée un menu console avec les différentes fonctionnalités pouvant être exécutées
@@ -120,7 +121,11 @@ class Main:
         """
         from db import db
         loop = asyncio.new_event_loop()
-        loop.run_until_complete(train_models(db))
+        data_manager = DataManager(db, keep_data=True)
+        data, books = loop.run_until_complete(data_manager.data)
+        train_models = [lambda: ContentBasedModel(books).train_save(), lambda: CollaborativeBasedModel().train_save(data, books)]
+        for train_model in tqdm(train_models, desc="Entrainement des modèles"):
+            train_model()
         input("Entrée pour continuer...")
 
     def _popularity_rec(self):
@@ -136,13 +141,19 @@ class Main:
         input("Entrée pour continuer...")
 
     def _content_rec(self):
+        book_title = input("Titre du livre : ")
+        self.content_model.load()
+        print(self.content_model.predict(book_title))
         input("Entrée pour continuer...")
 
 
     def _collab_rec(self):
+        user_id = input("ID de l'utilisateur : ")
+        print(self.collab_model.predict(user_id))
         input("Entrée pour continuer...")
     
     def _run_api(self):
+        print("Pas encore implémenté !")
         input("Entrée pour continuer...")
         
 

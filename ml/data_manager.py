@@ -21,7 +21,8 @@ class DataManager:
                 cls._instance = super().__new__(cls, *args, **kwargs)
                 cls._instance.keep_data = keep_data
                 if keep_data:
-                    cls._instance._load(db)
+                    loop = asyncio.new_event_loop()
+                    loop.run_until_complete(cls._instance._load(db))
         return cls._instance
 
     @property
