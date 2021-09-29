@@ -1,13 +1,27 @@
 from __future__ import annotations
 import argparse
+import asyncio
 from consolemenu import ConsoleMenu
 from consolemenu.items import FunctionItem
 import sys
+import tensorflow as tf
+from tqdm import tqdm
+from ml.data_manager import DataManager
+from ml.content_model import ContentBasedModel
+from ml.collab_model import CollaborativeBasedModel
+from ml.pop_model import PopularityBasedModel
+
+async def train_models(conn):
+    data_manager = DataManager(conn, keep_data=True)
+    data, books = await data_manager.data
+    train_models = [lambda: ContentBasedModel(books).train_save(), lambda: CollaborativeBasedModel().train_save(data, books)]
+    for train_model in tqdm(train_models, desc="Entrainement des modèles"):
+        train_model()
 
 
 class Main:
-    """Classe de lancement du programme principal.
-    """
+    """Classe de lancement du programme principal."""
+
     def __init__(self):
         # Titre de l'application
         self.title = "BookPi"
@@ -31,6 +45,9 @@ class Main:
         )
         menu.append_item(FunctionItem("Entrainement des modèles", self._train))
         menu.append_item(
+            FunctionItem("Recommandation de popularité", self._popularity_rec)
+        )
+        menu.append_item(
             FunctionItem("Recommandation basé sur le contenu", self._content_rec)
         )
         menu.append_item(
@@ -47,12 +64,18 @@ class Main:
         """Défini les différents arguments que le programme peut prendre en compte de
 
         Returns:
-            argparse.ArgumentParser: Un object ArgumentParser 
+            argparse.ArgumentParser: Un object ArgumentParser
         """
         parser = argparse.ArgumentParser(prog=self.title, description=self.slogan)
         group = parser.add_mutually_exclusive_group()
         group.add_argument(
             "-t", "--train", help="Entrainement des modèles", action="store_true"
+        )
+        group.add_argument(
+            "-p",
+            "--poprec",
+            help="Recommandation de popularité",
+            action="store_true",
         )
         group.add_argument(
             "-c",
@@ -89,24 +112,42 @@ class Main:
             elif args.runapi:
                 self._run_api()
 
-    def _train(self, path: (str | None)=None):
+    def _train(self, path: (str | None) = None):
         """Fonction de lancement de l'entraînement des modèles
 
         Args:
             path (str): Chemin où l'on veut enregistrer les modèles entraînés
         """
-        pass
+        from db import db
+        loop = asyncio.new_event_loop()
+        loop.run_until_complete(train_models(db))
+        input("Entrée pour continuer...")
+
+    def _popularity_rec(self):
+        from db import db
+        print("Chargement des données...")
+        data_manager = DataManager(db, keep_data=True)
+        loop = asyncio.new_event_loop()
+        loop.run_until_complete(data_manager._load(db))
+        # Chargement des données de la bdd
+        _, books = loop.run_until_complete(data_manager.data)
+        pop_model = PopularityBasedModel(books)
+        print(pop_model.predict())
+        input("Entrée pour continuer...")
 
     def _content_rec(self):
-        pass
+        input("Entrée pour continuer...")
+
 
     def _collab_rec(self):
-        pass
-
+        input("Entrée pour continuer...")
+    
     def _run_api(self):
-        pass
+        input("Entrée pour continuer...")
+        
 
 
 if __name__ == "__main__":
+    tf.get_logger().setLevel(3)
     main = Main()
     main.run()
