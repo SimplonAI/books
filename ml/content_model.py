@@ -47,7 +47,7 @@ class ContentBasedModel:
         # Obtenir les scores de 10 livres similaires
         talk_indices = [i[0] for i in filtered_scores]
         # Obtenir les index des livres
-        return self.books["book_title"].drop(idx).iloc[talk_indices]
+        return self.books.drop(idx).iloc[talk_indices]
 
     def train(self):
         tfidf = TfidfVectorizer()

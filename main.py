@@ -5,8 +5,11 @@ import os
 import sys
 from consolemenu import ConsoleMenu
 from consolemenu.items import FunctionItem
-import tensorflow as tf
 from tqdm import tqdm
+from hypercorn.config import Config
+import tensorflow as tf
+from hypercorn.asyncio import serve
+from app import app
 from ml.data_manager import DataManager
 from ml.content_model import ContentBasedModel
 from ml.collab_model import CollaborativeBasedModel
@@ -20,6 +23,8 @@ class Main:
         self.title = "BYAM - Yet Another Model for Books"
         # Slogan de l'application
         self.slogan = "L'API qui recommande les livres pour vos utilisateurs !"
+        # Variable d'état pour savoir si on lance le serveur de dev
+        self.run_api = False
         if not os.path.isfile(os.path.join("config.yml")):
             sys.exit("Vous devez configurer votre application avec un config.yml pour qu'elle puisse s'exécuter !")
         # Construction du menu
@@ -115,7 +120,7 @@ class Main:
             elif args.collabrec:
                 self._collab_rec()
             elif args.runapi:
-                self._run_api()
+                asyncio.run(serve(app, Config()))
 
     def _train(self, path: (str | None) = None):
         """Fonction de lancement de l'entraînement des modèles
@@ -137,7 +142,6 @@ class Main:
         print("Chargement des données...")
         data_manager = DataManager(db, keep_data=True)
         loop = asyncio.new_event_loop()
-        loop.run_until_complete(data_manager._load(db))
         # Chargement des données de la bdd
         _, books = loop.run_until_complete(data_manager.data)
         pop_model = PopularityBasedModel(books)
@@ -161,8 +165,10 @@ class Main:
         input("Entrée pour continuer...")
     
     def _run_api(self):
-        print("Pas encore implémenté !")
-        input("Entrée pour continuer...")
+        print("Afin d'exécuter le serveur dans le thread principal, merci de taper la commande suivante :")
+        print("")
+        print("python main.py --runapi")
+        sys.exit()
         
 
 
