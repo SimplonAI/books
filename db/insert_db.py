@@ -5,10 +5,16 @@ from consolemenu.items import FunctionItem
 from .models import Books, BooksTags, Ratings, Tags, ToRead
 from .db import db
 
-def add_prefix(data: pd.DataFrame, prefix: str, filter: (list | str) =[]):
+
+def add_prefix(data: pd.DataFrame, prefix: str, filter: (list | str) = []):
     if isinstance(filter, str):
         filter = [filter]
-    return data.rename(columns={ col: prefix+col if col not in filter else col for col in data.columns})
+    return data.rename(
+        columns={
+            col: prefix + col if col not in filter else col for col in data.columns
+        }
+    )
+
 
 def insert_data():
     # Chargement des données csv
@@ -23,7 +29,6 @@ def insert_data():
     book_tags.drop_duplicates(["goodreads_book_id", "tag_id"], inplace=True)
     ratings = add_prefix(ratings, "rt_", ["book_id", "user_id"])
 
-
     with db.begin() as conn:
         Books.insert_df(books, conn)
         print("[1/5] Livres insérés")
@@ -37,9 +42,11 @@ def insert_data():
         print("[5/5] Relation Livres-Tags inséré")
     print("Tout a été inséré !")
 
+
 def add_data(file):
     data = pd.read_csv(file)
     print("look for data with API")
+
 
 def add_data_menu():
     file = ""
@@ -48,7 +55,8 @@ def add_data_menu():
     if file != "q":
         add_data(file)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     menu = ConsoleMenu()
     menu.append_item(FunctionItem("Insertion initiale des données csv", insert_data))
     menu.append_item(FunctionItem("Importation de données partielles", add_data_menu))

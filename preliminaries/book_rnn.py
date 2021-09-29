@@ -304,20 +304,18 @@ async def main():
     shuffled = data.shuffle(100_000, seed=42, reshuffle_each_iteration=False)
     train = shuffled.take(80_000)
     test = shuffled.skip(80_000).take(20_000)
-    
+
     # On crée notre modèle de notations
     ratings_model = RatingsModel(train, books, 1.0, 1.0)
 
     # On compile le modèle avec une descende de gradient Adagrad et un learning rate de 0.1
-    ratings_model.compile(
-        optimizer=tf.keras.optimizers.Adagrad(learning_rate=0.1)
-    )
+    ratings_model.compile(optimizer=tf.keras.optimizers.Adagrad(learning_rate=0.1))
 
     # On met en cache les données d'entraînement et de test pour de meilleurs performances
     retrieval_cached_ratings_trainset = train.shuffle(100_000).batch(8192).cache()
     retrieval_cached_ratings_testset = test.batch(4096).cache()
 
-    # On entraîne le modèle sur 25 epochs et on récupère les mesures d'entraînement 
+    # On entraîne le modèle sur 25 epochs et on récupère les mesures d'entraînement
     history = ratings_model.fit(
         retrieval_cached_ratings_trainset,
         validation_data=retrieval_cached_ratings_testset,
@@ -342,7 +340,9 @@ async def main():
     user_id = 43675
     afinity_scores, movie_ids = brute_force_layer(tf.constant([user_id]))
 
-    print(f"Recommandations pour l'utilisateur {user_id} en utilisant BruteForce : {movie_ids[0, :5]}")
+    print(
+        f"Recommandations pour l'utilisateur {user_id} en utilisant BruteForce : {movie_ids[0, :5]}"
+    )
 
     # On sauvegarde notre modèle final
     path = os.path.join("saved_models", "model_rnn")
