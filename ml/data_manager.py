@@ -53,11 +53,9 @@ class DataManager:
         books = await loop.run_in_executor(
             None, pd.read_sql, "SELECT * FROM books", db
         )
+
         tags = await loop.run_in_executor(
-            None, pd.read_sql, "SELECT * FROM tags_joined", db
-        )
-        tags = await loop.run_in_executor(
-            None, pd.read_sql, "SELECT * FROM tags_joined", db
+            None, pd.read_sql, "SELECT ranks.tag_id, ranks.tag_name, ranks.count, ranks.goodreads_book_id, ranks.tag_rank FROM ( SELECT t.tag_id, t.tag_name, bt.count, bt.goodreads_book_id, row_number() OVER (PARTITION BY bt.goodreads_book_id ORDER BY bt.count DESC) AS tag_rank FROM tags t JOIN books_tags bt ON bt.tag_id = t.tag_id) ranks WHERE ranks.tag_rank <= 10;", db
         )
         tags = (
             tags[tags["tag_name"].apply(self.filter_tags)].reset_index(drop=True).copy()

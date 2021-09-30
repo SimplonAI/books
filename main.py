@@ -132,6 +132,10 @@ class Main:
         loop = asyncio.new_event_loop()
         data_manager = DataManager(db, keep_data=True)
         data, books = loop.run_until_complete(data_manager.data)
+        if path is None:
+            path = "saved_models"
+        if not os.path.exists(path):
+            os.mkdir(path)
         train_models = [lambda: ContentBasedModel(books).train_save(), lambda: CollaborativeBasedModel().train_save(data, books)]
         for train_model in tqdm(train_models, desc="Entrainement des modèles"):
             train_model()
