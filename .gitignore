@@ -128,3 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 config.yml
+saved_models/collab_model/saved_model.pb
+.gitignore
+saved_models/collab_model/variables/variables.data-00000-of-00001
+saved_models/collab_model/variables/variables.index
+saved_models/content_based_saved.joblib
