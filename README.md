@@ -33,9 +33,9 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
-4. Copier et renommer le fichier config_default.yml et y ajouter vos identifiants de connexion à la base de données :
+4. Copier et renommer le fichier config_example.yml et y ajouter vos identifiants de connexion à la base de données :
 ```bash
-cp default_config.yml config.yml
+cp config_example.yml config.yml
 ```
 
 ## Installation
