@@ -27,6 +27,7 @@ app = FastAPI(
     },
 )
 
+
 class BookResponse(BaseModel):
     book_id: int
     book_title: str
@@ -54,13 +55,16 @@ class BookResponse(BaseModel):
     goodreads_book_id: int
     tags: str
 
+
 content_model = ContentBasedModel(None)
 collab_model = CollaborativeBasedModel()
+
 
 @app.get("/popularity", response_model=list[BookResponse])
 async def popularity_rec():
     _, books = await DataManager(db, keep_data=True).data
-    return PopularityBasedModel(books).predict().to_dict('records')
+    return PopularityBasedModel(books).predict().to_dict("records")
+
 
 @app.get("/content-based", response_model=list[BookResponse])
 async def content_based(response: Response, book_title: str = ""):
@@ -71,7 +75,8 @@ async def content_based(response: Response, book_title: str = ""):
         _, books = await DataManager(db, keep_data=True).data
         content_model.books = books
     content_model.load()
-    return content_model.predict(book_title).to_dict('records')
+    return content_model.predict(book_title).to_dict("records")
+
 
 @app.get("/collaborative", response_model=list[BookResponse])
 async def collab_based(response: Response, user_id: int = 0):
@@ -81,8 +86,9 @@ async def collab_based(response: Response, user_id: int = 0):
     collab_model.load()
     _, book_ids = collab_model.predict(user_id)
     _, books = await DataManager(db, keep_data=True).data
-    book_titles = [ title.decode("utf-8") for title in book_ids[0, :10].numpy().tolist()]
-    return books[books["book_title"].isin(book_titles)].to_dict('records')
+    book_titles = [title.decode("utf-8") for title in book_ids[0, :10].numpy().tolist()]
+    return books[books["book_title"].isin(book_titles)].to_dict("records")
+
 
 @app.on_event("startup")
 def startup_event():
