@@ -1,10 +1,16 @@
+from typing import Union
 from fastapi import FastAPI, Response, status
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from ml.pop_model import PopularityBasedModel
 from ml.data_manager import DataManager
 from db import db
 from ml.content_model import ContentBasedModel
 from ml.collab_model import CollaborativeBasedModel
+
+origins = [
+    "*",
+]
 
 description = """
 L'API qui recommande les livres pour vos utilisateurs ! 🚀
@@ -28,16 +34,25 @@ app = FastAPI(
 )
 
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 class BookResponse(BaseModel):
     book_id: int
     book_title: str
-    book_original_title: str
+    book_original_title: Union[str, None]
     book_authors: str
-    book_language_code: str
-    book_original_publication_year: int
+    book_language_code: Union[str, None]
+    book_original_publication_year: Union[int, None]
     book_average_rating: float
-    book_isbn: str
-    book_isbn13: str
+    book_isbn: Union[str, None]
+    book_isbn13: Union[str, None]
     book_ratings_count: int
     book_work_ratings_count: int
     book_work_text_reviews_count: int
